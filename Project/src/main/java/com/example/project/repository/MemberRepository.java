@@ -1,0 +1,16 @@
+package com.example.project.repository;
+
+import com.example.project.domain.Member;
+import com.example.project.domain.MemberId;
+import com.example.project.domain.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface MemberRepository extends JpaRepository<Member, MemberId> {
+    boolean existsByGroupIdAndUserID(Long groupId, String userId);
+    long countByGroupId(Long groupId);
+    long countByUserID(String userID);
+    List<Member> findByUserID(String userID);
+    List<Member> findByUser(User user);
+}
