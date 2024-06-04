@@ -11,8 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
-@Table(name = "user_table")
+@Table(name = "user")
 public class User {
 
     @Id

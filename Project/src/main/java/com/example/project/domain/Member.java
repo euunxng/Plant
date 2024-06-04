@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @IdClass(MemberId.class)
 @Builder
-@Table(name = "member_table")
+@Table(name = "member")
 public class Member {
 
     @Id

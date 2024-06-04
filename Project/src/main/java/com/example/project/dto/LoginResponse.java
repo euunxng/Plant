@@ -1,9 +1,10 @@
 package com.example.project.dto;
 
 import com.example.project.domain.User;
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class LoginResponse {
     // 성공 여부를 가져오는 메서드
     private boolean success;
