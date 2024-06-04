@@ -18,7 +18,7 @@ public class Item {
     @Column(name = "groupId")
     private Long groupId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "groupId", insertable = false, updatable = false)
     private Groups group;
 

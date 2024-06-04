@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface GroupsRepository extends JpaRepository<Groups, Long> {
     List<Groups> findByGroupNameContaining(String keyword);
+    boolean existsById(Long groupId);
 }
