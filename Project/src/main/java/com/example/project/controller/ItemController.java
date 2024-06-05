@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.domain.Item;
 import com.example.project.dto.ItemDto;
+import com.example.project.dto.waterDto;
 import com.example.project.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,5 +40,16 @@ public class ItemController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/getWaterCountByGroupId")
+    public List<waterDto> getWaterCountByGroupId(@RequestParam("groupId") Long groupId) {
+        return itemService.getWaterCountByGroupId(groupId);
+    }
+
+    @PutMapping("/updateWaterCountByGroupId")
+    public waterDto updateWaterCountByGroupId(@RequestParam("groupId") Long groupId,
+                                              @RequestBody waterDto newWaterDto) {
+        return itemService.updateWaterCountByGroupId(groupId, newWaterDto);
     }
 }

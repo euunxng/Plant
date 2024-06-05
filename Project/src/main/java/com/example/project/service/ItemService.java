@@ -2,11 +2,14 @@ package com.example.project.service;
 
 import com.example.project.domain.Item;
 import com.example.project.dto.ItemDto;
+import com.example.project.dto.waterDto;
 import com.example.project.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,5 +78,33 @@ public class ItemService {
                 .title(updatedItem.isTitle())
                 .bfly(updatedItem.isBfly())
                 .build();
+    }
+
+    @Transactional
+    public List<waterDto> getWaterCountByGroupId(Long groupId) {
+        List<Item> items = itemRepository.findByGroupId(groupId);
+
+        if (items.isEmpty()) {
+            throw new IllegalArgumentException("해당 그룹 ID에 해당하는 아이템이 없습니다: " + groupId);
+        }
+
+        return items.stream()
+                .map(item -> new waterDto(item.getWater()))
+                .collect(Collectors.toList());
+    }
+
+    public waterDto updateWaterCountByGroupId(Long groupId, waterDto newWaterDto) {
+        Optional<Item> itemOptional = itemRepository.findByGroupId(groupId).stream().findFirst();
+
+        if (itemOptional.isEmpty()) {
+            throw new IllegalArgumentException("해당 그룹 ID에 해당하는 아이템이 없습니다: " + groupId);
+        }
+
+        Item item = itemOptional.get();
+        item.setWater(newWaterDto.getWater());
+
+        itemRepository.save(item);
+
+        return new waterDto(item.getWater());
     }
 }
