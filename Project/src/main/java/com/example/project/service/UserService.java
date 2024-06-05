@@ -94,4 +94,11 @@ public class UserService {
         String emailPattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$";
         return email.matches(emailPattern);
     }
+    public boolean checkUserID(String userID) {
+        return userRepository.existsById(userID);
+    }
+
+    public boolean checkEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }
