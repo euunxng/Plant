@@ -101,4 +101,12 @@ public class UserService {
     public boolean checkEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }
