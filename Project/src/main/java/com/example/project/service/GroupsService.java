@@ -22,7 +22,7 @@ public class GroupsService {
 
     private final GroupsRepository groupsRepository;
     private final MemberRepository memberRepository;
-    
+
 
     private static final int MAX_USER_GROUPS = 6; // 사용자가 참여할 수 있는 최대 그룹 수
 
