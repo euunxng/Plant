@@ -18,6 +18,7 @@ public class User {
     @NotBlank
     @Column(name = "userID", length = 8, nullable = false, unique = true)
     private String userID;
+
     public void setUserID(String userID) {
         if (userID.length() > 8) {
             throw new IllegalArgumentException("8자보다 깁니다.");
@@ -28,6 +29,7 @@ public class User {
     @NotBlank
     @Column(name = "userName", length = 8, nullable = false)
     private String userName;
+
     public void setUserName(String userName) {
         if (userName.length() > 8) {
             throw new IllegalArgumentException("8자보다 깁니다.");
@@ -43,21 +45,17 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    // 프로필사진 nullable = false 해야함 나중에
-    @NotBlank
     @Lob
-    @Column(name = "profilePhoto")
+    @Column(name = "profilePhoto", nullable = false)
     private byte[] profilePhoto;
 
-    // 얼굴인식 nullable = false 해야함 나중에
-    @NotBlank
     @Lob
-    @Column(name = "userFace")
+    @Column(name = "userFace", nullable = false)
     private byte[] userFace;
 
     @Builder.Default
-    @Column(name = "login", columnDefinition = "TINYINT default 0")
-    private boolean login= false;
+    @Column(name = "login", columnDefinition = "TINYINT(1) default 0")
+    private boolean login = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;

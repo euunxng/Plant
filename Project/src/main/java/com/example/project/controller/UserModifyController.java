@@ -51,9 +51,9 @@ public class UserModifyController {
             throw new RuntimeException("사용자가 로그인되어 있지 않습니다.");
         }
 
-        // 프로필 사진 업데이트
+        // 사용자 얼굴 업데이트
         userModifyService.updateUserFace(user, userFace);
 
-        return "프로필 사진이 성공적으로 업데이트되었습니다.";
+        return "사용자 얼굴이 성공적으로 업데이트되었습니다.";
     }
 }
