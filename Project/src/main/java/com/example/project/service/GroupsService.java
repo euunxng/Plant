@@ -3,6 +3,7 @@ package com.example.project.service;
 import com.example.project.domain.Groups;
 import com.example.project.domain.Member;
 import com.example.project.domain.User;
+import com.example.project.dto.GroupPageDto;
 import com.example.project.dto.GroupsDto;
 import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.SearchDto;
@@ -107,5 +108,15 @@ public class GroupsService {
                         group.getGroupPassword()
                 ))
                 .collect(Collectors.toList());
+    }
+
+
+    public GroupPageDto getGroupById(Long groupId) {
+        Groups group = groupsRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+        return GroupPageDto.builder()
+                .groupId(group.getGroupId())
+                .groupName(group.getGroupName())
+                .groupPassword(group.getGroupPassword())
+                .build();
     }
 }

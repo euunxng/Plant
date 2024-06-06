@@ -1,5 +1,6 @@
 package com.example.project.controller;
 
+import com.example.project.dto.GroupPageDto;
 import com.example.project.dto.GroupsDto;
 import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.SearchDto;
@@ -38,5 +39,10 @@ public class GroupsController {
     public ResponseEntity<List<SearchDto>> searchGroups(@RequestParam("keyword") String keyword) {
         List<SearchDto> groups = groupsService.searchGroups(keyword);
         return ResponseEntity.ok(groups);
+    }
+
+    @GetMapping("/GroupPage/{groupId}")
+    public GroupPageDto getGroupById(@PathVariable("groupId") Long groupId) {
+        return groupsService.getGroupById(groupId);
     }
 }

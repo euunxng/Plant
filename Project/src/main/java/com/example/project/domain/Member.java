@@ -23,11 +23,11 @@ public class Member {
     @Column(name = "userID", nullable = false)
     private String userID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "groupId", insertable = false, updatable = false)
     private Groups group;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID", insertable = false, updatable = false)
     private User user;
 
