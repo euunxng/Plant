@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,8 +17,22 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<?> save(@RequestBody UserDto userRequest) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<?> save(
+            @RequestParam("userID") String userID,
+            @RequestParam("userName") String userName,
+            @RequestParam("userPassword") String userPassword,
+            @RequestParam("email") String email,
+            @RequestParam("profilePhoto") MultipartFile profilePhoto,
+            @RequestParam("userFace") MultipartFile userFace) {
+        UserDto userRequest = UserDto.builder()
+                .userID(userID)
+                .userName(userName)
+                .userPassword(userPassword)
+                .email(email)
+                .profilePhoto(profilePhoto)
+                .userFace(userFace)
+                .build();
         return userService.save(userRequest);
     }
 

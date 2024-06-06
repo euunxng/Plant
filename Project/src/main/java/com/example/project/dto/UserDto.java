@@ -1,10 +1,10 @@
 package com.example.project.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -15,8 +15,9 @@ public class UserDto {
     private String userName;
     private String userPassword;
     private String email;
-    private byte[] profilePhoto;
-    private byte[] userFace;
-    private boolean login;
-
+    private MultipartFile profilePhoto; // 이미지 파일 저장
+    private MultipartFile userFace; // 이미지 파일 저장
+    private boolean login; // 로그인 여부
+    private String profilePhotoPath; // 프로필 사진 경로
+    private String userFacePath; // 얼굴 사진 경로
 }

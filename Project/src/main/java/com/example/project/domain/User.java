@@ -45,13 +45,11 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Lob
-    @Column(name = "profilePhoto", nullable = false)
-    private byte[] profilePhoto;
+    @Column(name = "profilePhotoPath", nullable = false)
+    private String profilePhotoPath;
 
-    @Lob
-    @Column(name = "userFace", nullable = false)
-    private byte[] userFace;
+    @Column(name = "userFacePath", nullable = false)
+    private String userFacePath;
 
     @Builder.Default
     @Column(name = "login", columnDefinition = "TINYINT(1) default 0")
@@ -59,5 +57,4 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
-
 }

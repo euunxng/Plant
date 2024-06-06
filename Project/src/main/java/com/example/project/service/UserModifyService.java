@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.UUID;
 
 @Service
@@ -39,16 +38,17 @@ public class UserModifyService {
 
         // 프로필 사진 업로드 및 경로 저장
         try {
-            String fileName = UUID.randomUUID().toString();
+            String fileName = UUID.randomUUID().toString() + ".jpg";
             byte[] bytes = profilePicture.getBytes();
             Path path = Paths.get("uploads/profile/" + fileName);
             Files.write(path, bytes);
-            userInfo.setProfilePhoto(path.toString().getBytes());
+            userInfo.setProfilePhotoPath(path.toString());
             userRepository.save(userInfo);
         } catch (IOException e) {
             throw new RuntimeException("프로필 사진 업로드에 실패했습니다.", e);
         }
     }
+
     @Transactional
     public void updateUserFace(User user, MultipartFile userFace) {
         User userInfo = userRepository.findById(user.getUserID())
@@ -56,15 +56,14 @@ public class UserModifyService {
 
         // 얼굴 이미지 업로드 및 경로 저장
         try {
-            String fileName = UUID.randomUUID().toString();
+            String fileName = UUID.randomUUID().toString() + ".jpg";
             byte[] bytes = userFace.getBytes();
             Path path = Paths.get("uploads/face/" + fileName);
             Files.write(path, bytes);
-            userInfo.setUserFace(path.toString().getBytes());
+            userInfo.setUserFacePath(path.toString());
             userRepository.save(userInfo);
         } catch (IOException e) {
             throw new RuntimeException("얼굴 이미지 업로드에 실패했습니다.", e);
         }
     }
-
 }
