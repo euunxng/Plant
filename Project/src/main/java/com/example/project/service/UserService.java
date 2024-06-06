@@ -136,4 +136,11 @@ public class UserService {
         }
         return imageFile.getAbsolutePath();
     }
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }
