@@ -3,6 +3,7 @@ package com.example.project.service;
 import com.example.project.domain.Groups;
 import com.example.project.domain.Member;
 import com.example.project.domain.User;
+import com.example.project.dto.MemberDto;
 import com.example.project.repository.GroupsRepository;
 import com.example.project.repository.MemberRepository;
 import com.example.project.repository.UserRepository;
@@ -11,13 +12,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final GroupsRepository groupsRepository;
-    private final UserRepository userRepository;
 
     private static final int MAX_GROUP_MEMBERS = 6; // 최대 그룹 인원
     private static final int MAX_USER_GROUPS = 6; // 사용자가 참여할 수 있는 최대 그룹 수
@@ -63,5 +66,30 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    public List<MemberDto> getMembersByGroupId(Long groupId) {
+        List<Member> members = memberRepository.findByGroupId(groupId);
+        return members.stream()
+                .map(member -> MemberDto.builder()
+                        .groupId(member.getGroupId())
+                        .userID(member.getUserID())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteMemberFromGroup(Long groupId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("사용자가 로그인되어 있지 않습니다.");
+        }
+        String userId = user.getUserID();
+
+        boolean isMemberExist = memberRepository.existsByGroupIdAndUserID(groupId, userId);
+        if (!isMemberExist) {
+            throw new RuntimeException("사용자가 해당 그룹의 멤버가 아닙니다.");
+        }
+
+        memberRepository.deleteByGroupIdAndUserID(groupId, userId);
+    }
 
 }

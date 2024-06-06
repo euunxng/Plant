@@ -15,4 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, MemberId> {
     long countByUserID(String userID);
     List<Member> findByUserID(String userID);
     List<Member> findByUser(User user);
+    List<Member> findByGroupId(Long groupId);
+    void deleteByGroupIdAndUserID(Long groupId, String userID);
 }

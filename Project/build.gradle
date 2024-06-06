@@ -31,6 +31,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.1.3'
     implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final' // Hibernate Validator 최신 버전으로 수정
     implementation 'javax.validation:validation-api:2.0.1.Final' // Hibernate Validator가 사용하는 JSR-380 API
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
