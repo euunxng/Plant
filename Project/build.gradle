@@ -40,6 +40,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'jakarta.mail:jakarta.mail-api:2.1.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    compileOnly'org.springframework.boot:spring-boot-devtools'
 
 }
 
