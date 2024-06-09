@@ -2,12 +2,14 @@ package com.example.project.controller;
 
 import com.example.project.domain.Wishlist;
 import com.example.project.dto.WishlistDto;
+import com.example.project.dto.cCompleteDto;
 import com.example.project.service.WishlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -17,7 +19,7 @@ public class WishlistController {
     private final WishlistService wishlistService;
 
 
-    @PostMapping("/Wishlist")
+    @GetMapping("/Wishlist")
     public List<WishlistDto> getWishlistByGroupId(@RequestParam("groupId") Long groupId) {
         return wishlistService.getWishlistByGroupId(groupId);
     }
@@ -40,6 +42,11 @@ public class WishlistController {
     public ResponseEntity<Void> deleteWishlist(@PathVariable("wishID") Long wishID) {
         wishlistService.deleteWishlist(wishID);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/updateCompleteByWishID")
+    public WishlistDto updateCompleteByWishID(@RequestParam("wishID") Long wishID) {
+        return wishlistService.updateCompleteByWishID(wishID);
     }
 
 }

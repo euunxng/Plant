@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class WishlistDto {
 
+    private Long wishID;
     private String contents;
     private boolean complete;
 }
