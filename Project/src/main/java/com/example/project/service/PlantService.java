@@ -3,6 +3,7 @@ package com.example.project.service;
 import com.example.project.domain.Groups;
 import com.example.project.dto.PlantDto;
 import com.example.project.dto.PlantGaugeDto;
+import com.example.project.dto.PlantTypeDto;
 import com.example.project.repository.GroupsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,35 @@ public class PlantService {
         Groups updatedGroup = groupsRepository.save(group);
 
         return new PlantDto(updatedGroup.getGrowStep(), updatedGroup.getPlantGauge(), updatedGroup.getPlantType());
+    }
+
+
+    public PlantTypeDto getPlantType(Long groupId) {
+        Groups group = groupsRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("그룹이 존재하지 않습니다."));
+        return PlantTypeDto.builder()
+                .plantType(group.getPlantType())
+                .build();
+    }
+
+    public PlantTypeDto updatePlantType(Long groupId, PlantTypeDto plantTypeDto) {
+        Groups group = groupsRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("그룹이 존재하지 않습니다."));
+
+        group.setPlantType(plantTypeDto.getPlantType());
+
+        Groups updatedGroup = groupsRepository.save(group);
+
+        return new PlantTypeDto(updatedGroup.getPlantType());
+    }
+
+
+    public PlantGaugeDto getPlantGauge(Long groupId) {
+        Groups group = groupsRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("그룹이 존재하지 않습니다."));
+        return PlantGaugeDto.builder()
+                .plantGauge(group.getPlantGauge())
+                .build();
     }
 
     public PlantGaugeDto updatePlantGauge(Long groupId, PlantGaugeDto plantGaugeDto) {
