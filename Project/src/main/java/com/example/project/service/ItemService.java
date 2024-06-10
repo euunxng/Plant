@@ -107,4 +107,9 @@ public class ItemService {
 
         return new waterDto(item.getWater());
     }
+
+    public Item createItem(Long groupId) {
+        Item item = Item.builder().groupId(groupId).build();
+        return itemRepository.save(item);
+    }
 }

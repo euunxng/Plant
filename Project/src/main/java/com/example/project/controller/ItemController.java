@@ -52,4 +52,10 @@ public class ItemController {
                                               @RequestBody waterDto newWaterDto) {
         return itemService.updateWaterCountByGroupId(groupId, newWaterDto);
     }
+
+    @PostMapping("/putItem")
+    public ResponseEntity<Item> createItem(@RequestParam("groupId") Long groupId) {
+        Item newItem = itemService.createItem(groupId);
+        return ResponseEntity.ok(newItem);
+    }
 }
