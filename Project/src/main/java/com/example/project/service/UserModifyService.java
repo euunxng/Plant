@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,22 +17,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-import static com.example.project.service.UserService.logger;
-
 @Service
 @RequiredArgsConstructor
 public class UserModifyService {
 
     private final UserRepository userRepository;
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    @Value("${file.upload.profile}")
+    private String uploadProfileDir;
+
+    @Value("${file.upload.face}")
+    private String uploadFaceDir;
 
     @Transactional
     public void updateUserName(User user, String newUsername) {
         // 사용자 정보 가져오기
         User userInfo = userRepository.findById(user.getUserID())
-                .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다. 정보 업데이트를 위해 다시 로그인 해주세요."));
 
         // 닉네임 업데이트
         userInfo.setUserName(newUsername);
@@ -45,7 +44,7 @@ public class UserModifyService {
     public String updateProfilePicture(User user, MultipartFile profilePicture) {
         // 사용자 정보 가져오기
         User userInfo = userRepository.findById(user.getUserID())
-                .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다. 정보 업데이트를 위해 다시 로그인 해주세요."));
 
         // 프로필 사진 업로드 및 경로 저장
         try {
@@ -65,7 +64,7 @@ public class UserModifyService {
             String uniqueFileName = UUID.randomUUID().toString() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + fileExtension;
 
             // 정적 자원 디렉토리로 파일 저장 경로 설정
-            Path uploadDirPath = Paths.get(uploadDir);
+            Path uploadDirPath = Paths.get(uploadProfileDir);
             if (!Files.exists(uploadDirPath)) {
                 Files.createDirectories(uploadDirPath);
             }
@@ -74,11 +73,11 @@ public class UserModifyService {
             Files.write(filePath, profilePicture.getBytes());
 
             String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/")
+                    .path("/uploads/profile/")
                     .path(uniqueFileName)
                     .toUriString();
-            logger.info("File uploaded to: " + filePath);
-            logger.info("File accessible at: " + fileDownloadUri);
+            System.out.println("File uploaded to: " + filePath);
+            System.out.println("File accessible at: " + fileDownloadUri);
 
             userInfo.setProfilePhotoPath(fileDownloadUri);
             userRepository.save(userInfo);
@@ -92,30 +91,51 @@ public class UserModifyService {
     }
 
     @Transactional
-    public void updateUserFace(User user, MultipartFile userFace) {
+    public String updateUserFace(User user, MultipartFile userFace) {
+        // 사용자 정보 가져오기
         User userInfo = userRepository.findById(user.getUserID())
-                .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다. 정보 업데이트를 위해 다시 로그인 해주세요."));
 
         // 얼굴 이미지 업로드 및 경로 저장
         try {
-            String directory = uploadDir + "/face";
-            String fileName = UUID.randomUUID().toString() + ".jpg";
-            Path path = Paths.get(directory, fileName);
-
-            // 디렉토리가 존재하지 않으면 생성
-            if (!Files.exists(path.getParent())) {
-                Files.createDirectories(path.getParent());
-                System.out.println("디렉토리 생성됨: " + path.getParent());
+            String originalFileName = userFace.getOriginalFilename();
+            if (originalFileName == null) {
+                throw new IOException("File name is null");
             }
 
-            byte[] bytes = userFace.getBytes();
-            Files.write(path, bytes);
-            userInfo.setUserFacePath(path.toString());
+            String fileExtension = "";
+            int lastDotIndex = originalFileName.lastIndexOf(".");
+            if (lastDotIndex != -1) {
+                fileExtension = originalFileName.substring(lastDotIndex);
+            } else {
+                fileExtension = ".jpg";
+            }
+
+            String uniqueFileName = UUID.randomUUID().toString() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + fileExtension;
+
+            // 얼굴 이미지 저장 경로 설정
+            Path uploadDirPath = Paths.get(uploadFaceDir);
+            if (!Files.exists(uploadDirPath)) {
+                Files.createDirectories(uploadDirPath);
+            }
+
+            Path filePath = uploadDirPath.resolve(uniqueFileName);
+            Files.write(filePath, userFace.getBytes());
+
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/uploads//face/")
+                    .path(uniqueFileName)
+                    .toUriString();
+            System.out.println("User face image uploaded to: " + filePath);
+            System.out.println("User face image accessible at: " + fileDownloadUri);
+
+            userInfo.setUserFacePath(fileDownloadUri);
             userRepository.save(userInfo);
-            System.out.println("User face image updated successfully: " + path.toString());
+
+            return fileDownloadUri;
+
         } catch (IOException e) {
-            System.err.println("Failed to upload user face image");
-            e.printStackTrace();
+            System.err.println("Failed to upload user face image: " + e.getMessage());
             throw new RuntimeException("얼굴 이미지 업로드에 실패했습니다.", e);
         }
     }

@@ -47,14 +47,15 @@ public class UserModifyController {
     @PutMapping("/user/userFace")
     public String updateUserFace(@RequestParam("userFace") MultipartFile userFace, HttpSession session) {
         // 세션에서 로그인한 사용자 정보 가져오기
+        System.out.println("Received request to update user Face");
         User user = (User) session.getAttribute("user");
         if (user == null) {
+            System.err.println("User not logged in");
             throw new RuntimeException("사용자가 로그인되어 있지 않습니다.");
         }
 
+        String newUserFacePath = userModifyService.updateUserFace(user, userFace);
+        return newUserFacePath; // 새 프로필 사진 URL 반환
         // 사용자 얼굴 업데이트
-        userModifyService.updateUserFace(user, userFace);
-
-        return "사용자 얼굴이 성공적으로 업데이트되었습니다.";
     }
 }

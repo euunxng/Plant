@@ -28,8 +28,11 @@ public class UserController {
 
     private final UserService userService;
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    @Value("${file.upload.profile}")
+    private String uploadProfileDir;
+
+    @Value("${file.upload.face}")
+    private String uploadFaceDir;
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<?> save(
@@ -90,8 +93,17 @@ public class UserController {
         return userService.getUserInfo(user);
     }
 
-    @PostMapping(value = "/uploadImage", consumes = "multipart/form-data")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+    @PostMapping(value = "/uploadProfileImage", consumes = "multipart/form-data")
+    public ResponseEntity<String> uploadProfileImage(@RequestParam("file") MultipartFile file) {
+        return uploadImage(file, uploadProfileDir, "/uploads/profile/");
+    }
+
+    @PostMapping(value = "/uploadFaceImage", consumes = "multipart/form-data")
+    public ResponseEntity<String> uploadFaceImage(@RequestParam("file") MultipartFile file) {
+        return uploadImage(file, uploadFaceDir, "/uploads/face/");
+    }
+
+    private ResponseEntity<String> uploadImage(MultipartFile file, String uploadDir, String uriPath) {
         try {
             String originalFileName = file.getOriginalFilename();
             if (originalFileName == null) {
@@ -108,7 +120,6 @@ public class UserController {
 
             String uniqueFileName = UUID.randomUUID().toString() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + fileExtension;
 
-            // 정적 자원 디렉토리로 파일 저장 경로 설정
             File uploadDirPath = new File(uploadDir);
             if (!uploadDirPath.exists()) {
                 if (!uploadDirPath.mkdirs()) {
@@ -122,7 +133,7 @@ public class UserController {
             }
 
             String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/")
+                    .path(uriPath)
                     .path(uniqueFileName)
                     .toUriString();
 
