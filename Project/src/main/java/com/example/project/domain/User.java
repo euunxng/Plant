@@ -37,6 +37,10 @@ public class User {
         this.userName = userName;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
     @NotBlank
     @Column(name = "userPassword", nullable = false)
     private String userPassword;
@@ -57,4 +61,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
+
+
 }

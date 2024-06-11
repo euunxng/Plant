@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -34,12 +33,12 @@ public class Post {
     @JoinColumn(name = "userID", referencedColumnName = "userID", insertable = false, updatable = false)
     private User user;
 
-    @Column(name="pText", length=300, nullable = false)
-    private String pText;
+    @Column(name="ptext", length=300, nullable = false)
+    private String ptext;
 
     @Column(name="photoPath", length=10485760) // 10MB 크기의 Base64 인코딩된 문자열을 허용
     private String photoPath;
 
-    @Column(name="pDate", nullable = false)
-    private LocalDate pDate;
+    @Column(name="pdate", nullable = false)
+    private LocalDate pdate;
 }

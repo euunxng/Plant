@@ -1,6 +1,7 @@
 package com.example.project.service;
 
-import com.example.project.domain.*;
+import com.example.project.domain.Groups;
+import com.example.project.domain.Post;
 import com.example.project.dto.PhotoList;
 import com.example.project.dto.PostDto;
 import com.example.project.dto.PostViewDto;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +30,8 @@ public class PostService {
                 .group(group)
                 .groupId(Long.parseLong(postDto.getGroupId()))
                 .userID(userID)
-                .pText(postDto.getPText())
-                .pDate(postDto.getPDate() != null ? postDto.getPDate() : LocalDate.now())
+                .ptext(postDto.getPtext())
+                .pdate(postDto.getPdate() != null ? postDto.getPdate() : LocalDate.now())
                 .photoPath(postDto.getPhotoPath())
                 .build();
 
@@ -39,21 +39,22 @@ public class PostService {
 
         return PostDto.builder()
                 .groupId(postDto.getGroupId())
-                .pText(post.getPText())
-                .pDate(post.getPDate())
+                .ptext(post.getPtext())
+                .pdate(post.getPdate())
                 .photoPath(post.getPhotoPath())
                 .build();
     }
 
     public PostViewDto getPostById(Long postId) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findPostWithUserById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid postId"));
 
         return PostViewDto.builder()
                 .userID(post.getUserID())
-                .pText(post.getPText())
+                .userName(post.getUser().getUserName())  // 닉네임 추가
+                .ptext(post.getPtext())
                 .photoPath(post.getPhotoPath())
-                .pDate(post.getPDate())
+                .pdate(post.getPdate())
                 .build();
     }
 

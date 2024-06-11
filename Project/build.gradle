@@ -41,6 +41,8 @@ dependencies {
     implementation 'jakarta.mail:jakarta.mail-api:2.1.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     compileOnly'org.springframework.boot:spring-boot-devtools'
+    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3' // Jackson 버전에 따라 적절한 버전으로 설정하세요
 
 }
 
