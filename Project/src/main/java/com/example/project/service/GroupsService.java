@@ -5,6 +5,7 @@ import com.example.project.domain.Member;
 import com.example.project.domain.User;
 import com.example.project.dto.GroupPageDto;
 import com.example.project.dto.GroupsInfoDto;
+import com.example.project.dto.MemberDto;
 import com.example.project.dto.SearchDto;
 import com.example.project.repository.GroupsRepository;
 import com.example.project.repository.MemberRepository;
@@ -125,7 +126,13 @@ public class GroupsService {
 
         // 필요한 정보만 DTO로 변환하여 반환
         return groupsList.stream()
-                .map(group -> new GroupsInfoDto(group.getGroupId(), group.getGroupName(), group.getGroupPassword()))
+                .map(group -> {
+                    List<MemberDto> members = memberRepository.findByGroupId(group.getGroupId())
+                            .stream()
+                            .map(member -> new MemberDto(member.getGroupId(), member.getUserID()))
+                            .collect(Collectors.toList());
+                    return new GroupsInfoDto(group.getGroupId(), group.getGroupName(), group.getGroupPassword(), members);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -149,13 +156,15 @@ public class GroupsService {
                 .build();
     }
 
-    public GroupPageDto getGroupInfo(Long groupId) {
+    public GroupsInfoDto getGroupsInfo(Long groupId) {
         Groups group = groupsRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹이 존재하지 않습니다."));
-        return GroupPageDto.builder()
-                .groupId(group.getGroupId())
-                .groupName(group.getGroupName())
-                .groupPassword(group.getGroupPassword())
-                .build();
+
+        List<Member> members = memberRepository.findByGroupId(groupId);
+        List<MemberDto> memberDtos = members.stream()
+                .map(member -> new MemberDto(member.getGroupId(), member.getUserID()))
+                .collect(Collectors.toList());
+
+        return new GroupsInfoDto(group.getGroupId(), group.getGroupName(), group.getGroupPassword(), memberDtos);
     }
 }

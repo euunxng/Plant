@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.domain.Member;
+import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.MemberDto;
 import com.example.project.service.MemberService;
 import jakarta.servlet.http.HttpSession;
@@ -30,8 +31,8 @@ public class MemberController {
     }
 
     @GetMapping("/MemberList/{groupId}")
-    public List<MemberDto> getMembersByGroupId(@PathVariable("groupId") Long groupId) {
-        return memberService.getMembersByGroupId(groupId);
+    public GroupsInfoDto getGroupInfo(@PathVariable("groupId") Long groupId) {
+        return memberService.getGroupInfo(groupId);
     }
 
     @DeleteMapping("/deleteMember")

@@ -3,10 +3,10 @@ package com.example.project.service;
 import com.example.project.domain.Groups;
 import com.example.project.domain.Member;
 import com.example.project.domain.User;
+import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.MemberDto;
 import com.example.project.repository.GroupsRepository;
 import com.example.project.repository.MemberRepository;
-import com.example.project.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class MemberService {
     private static final int MAX_GROUP_MEMBERS = 6; // 최대 그룹 인원
     private static final int MAX_USER_GROUPS = 5; // 사용자가 참여할 수 있는 최대 그룹 수
 
-    @Transactional//하나의 트랜잭션에서 실행
+    @Transactional
     public void addMemberToGroup(Long groupId, HttpSession session) {
 
         // 세션에서 로그인된 사용자 정보 가져오기
@@ -66,14 +66,16 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public List<MemberDto> getMembersByGroupId(Long groupId) {
+    public GroupsInfoDto getGroupInfo(Long groupId) {
+        Groups group = groupsRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("그룹을 찾을 수 없습니다."));
+
         List<Member> members = memberRepository.findByGroupId(groupId);
-        return members.stream()
-                .map(member -> MemberDto.builder()
-                        .groupId(member.getGroupId())
-                        .userID(member.getUserID())
-                        .build())
+        List<MemberDto> memberDtos = members.stream()
+                .map(member -> new MemberDto(member.getGroupId(), member.getUserID()))
                 .collect(Collectors.toList());
+
+        return new GroupsInfoDto(group.getGroupId(), group.getGroupName(), group.getGroupPassword(), memberDtos);
     }
 
     @Transactional
@@ -91,5 +93,4 @@ public class MemberService {
 
         memberRepository.deleteByGroupIdAndUserID(groupId, userId);
     }
-
 }

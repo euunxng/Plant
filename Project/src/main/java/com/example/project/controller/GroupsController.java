@@ -60,9 +60,9 @@ public class GroupsController {
     }
 
     @GetMapping("/api/group/info")
-    public ResponseEntity<GroupPageDto> getGroupInfo(@RequestParam("groupId") Long groupId) {
+    public ResponseEntity<GroupsInfoDto> getGroupInfo(@RequestParam("groupId") Long groupId) {
         try {
-            GroupPageDto groupInfo = groupsService.getGroupInfo(groupId);
+            GroupsInfoDto groupInfo = groupsService.getGroupsInfo(groupId);
             return ResponseEntity.ok(groupInfo);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
