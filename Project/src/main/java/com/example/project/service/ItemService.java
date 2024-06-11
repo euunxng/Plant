@@ -2,6 +2,7 @@ package com.example.project.service;
 
 import com.example.project.domain.Item;
 import com.example.project.dto.ItemDto;
+import com.example.project.dto.coinDto;
 import com.example.project.dto.waterDto;
 import com.example.project.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,25 @@ public class ItemService {
         Item item = itemRepository.findByGroup_GroupId(groupId)
                 .orElseThrow(() -> new RuntimeException("그룹이 존재하지 않습니다."));
         return item.getCoin();
+    }
+
+    @Transactional
+    public coinDto updateCoinByGroupId(Long groupId) {
+        Optional<Item> itemOptional = itemRepository.findByGroupId(groupId).stream().findFirst();
+
+        if (itemOptional.isEmpty()) {
+            throw new IllegalArgumentException("해당 그룹 ID에 해당하는 아이템이 없습니다: " + groupId);
+        }
+
+        Item item = itemOptional.get();
+
+        // 기존 코인 양에 3 추가
+        int updatedCoin = item.getCoin() + 3;
+        item.setCoin(updatedCoin);
+
+        itemRepository.save(item);
+
+        return new coinDto(item.getCoin());
     }
 
     // item리스트 가져오기

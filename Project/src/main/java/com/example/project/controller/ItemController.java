@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.domain.Item;
 import com.example.project.dto.ItemDto;
+import com.example.project.dto.coinDto;
 import com.example.project.dto.waterDto;
 import com.example.project.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,11 @@ public class ItemController {
     @GetMapping("/{groupId}/getcoin")
     public int getCoinByGroupId(@PathVariable("groupId") Long groupId) {
         return itemService.getCoinByGroupId(groupId);
+    }
+
+    @PutMapping("/updateCoinByGroupId")
+    public coinDto updateCoinByGroupId(@RequestParam("groupId") Long groupId) {
+        return itemService.updateCoinByGroupId(groupId);
     }
 
     @GetMapping("/{groupId}/getItem")
@@ -58,4 +64,5 @@ public class ItemController {
         Item newItem = itemService.createItem(groupId);
         return ResponseEntity.ok(newItem);
     }
+
 }
