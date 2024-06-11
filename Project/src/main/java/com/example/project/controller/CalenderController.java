@@ -1,6 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.domain.Calender;
+import com.example.project.dto.CalenderDto;
 import com.example.project.dto.cCompleteDto;
 import com.example.project.dto.cUpdateDto;
 import com.example.project.dto.cViewDto;
@@ -28,6 +29,11 @@ public class CalenderController {
         return calenderService.addCalenderEvent(groupId, cName, cDate, time, place);
     }
 
+
+    @GetMapping("/getSchedule/{groupId}")
+    public List<CalenderDto> getCalendersByGroupId(@PathVariable("groupId") Long groupId) {
+        return calenderService.getCalendersByGroupId(groupId);
+    }
 
     @GetMapping("/getSchedule/{groupId}/{cDate}")
     public List<cViewDto> getCalendersByGroupIdAndCDate(@PathVariable("groupId") Long groupId,

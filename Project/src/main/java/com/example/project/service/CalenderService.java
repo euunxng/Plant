@@ -2,6 +2,7 @@ package com.example.project.service;
 
 import com.example.project.domain.Calender;
 import com.example.project.domain.CalenderId;
+import com.example.project.dto.CalenderDto;
 import com.example.project.dto.cCompleteDto;
 import com.example.project.dto.cUpdateDto;
 import com.example.project.dto.cViewDto;
@@ -39,23 +40,33 @@ public class CalenderService {
                 .build();
         return calenderRepository.save(calender);
     }
-    
 
-    public List<cViewDto> getCalendersByGroupIdAndCDate(Long groupId, LocalDate cDate) {
+
+    public List<CalenderDto> getCalendersByGroupId(Long groupId) {
         if (!groupsRepository.existsById(groupId)) {
             throw new IllegalArgumentException("존재하지 않는 그룹 ID: " + groupId);
         }
 
-        List<Calender> calenders = calenderRepository.findByGroupId(groupId)
-                .stream()
-                .filter(calender -> calender.getCDate().equals(cDate))
-                .toList();
+        List<Calender> calenders = calenderRepository.findByGroupId(groupId);
 
         if (calenders.isEmpty()) {
-            throw new IllegalArgumentException("해당 그룹에 일정이 없습니다: " + groupId + " on date " + cDate);
+            throw new IllegalArgumentException("해당 그룹에 일정이 없습니다: " + groupId);
         }
 
-        return calenders.stream().map(this::convertToDto).collect(Collectors.toList());
+        return calenders.stream()
+                .map(this::convertToCDto)
+                .collect(Collectors.toList());
+    }
+
+    private CalenderDto convertToCDto(Calender calender) {
+        return CalenderDto.builder()
+                .groupId(calender.getGroupId())
+                .cDate(calender.getCDate())
+                .cName(calender.getCName())
+                .time(calender.getTime())
+                .place(calender.getPlace())
+                .complete(calender.isComplete())
+                .build();
     }
 
     public void deleteCalenderEvent(Long groupId, LocalDate cDate) {
@@ -122,6 +133,23 @@ public class CalenderService {
         calenderRepository.save(calender);
 
         return new cCompleteDto(true); // 업데이트된 complete 값을 반환
+    }
+
+    public List<cViewDto> getCalendersByGroupIdAndCDate(Long groupId, LocalDate cDate) {
+        if (!groupsRepository.existsById(groupId)) {
+            throw new IllegalArgumentException("존재하지 않는 그룹 ID: " + groupId);
+        }
+
+        List<Calender> calenders = calenderRepository.findByGroupId(groupId)
+                .stream()
+                .filter(calender -> calender.getCDate().equals(cDate))
+                .toList();
+
+        if (calenders.isEmpty()) {
+            throw new IllegalArgumentException("해당 그룹에 일정이 없습니다: " + groupId + " on date " + cDate);
+        }
+
+        return calenders.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
 
