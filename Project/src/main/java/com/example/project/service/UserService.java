@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.example.project.dto.LoginRequest;
+import com.example.project.request.LoginRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -119,4 +119,7 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
+    public User findByUserIDAndEmail(String userID, String email) {
+        return userRepository.findByUserIDAndEmail(userID, email);
+    }
 }

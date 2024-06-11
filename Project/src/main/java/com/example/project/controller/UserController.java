@@ -1,7 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.domain.User;
-import com.example.project.dto.LoginRequest;
+import com.example.project.request.LoginRequest;
 import com.example.project.dto.UserDto;
 import com.example.project.service.UserService;
 import jakarta.servlet.http.HttpSession;

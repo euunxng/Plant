@@ -4,11 +4,11 @@ import com.example.project.domain.Groups;
 import com.example.project.domain.Member;
 import com.example.project.domain.User;
 import com.example.project.dto.GroupPageDto;
-import com.example.project.dto.GroupsDto;
 import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.SearchDto;
 import com.example.project.repository.GroupsRepository;
 import com.example.project.repository.MemberRepository;
+import com.example.project.request.SearchRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,10 @@ public class GroupsService {
     private final GroupsRepository groupsRepository;
     private final MemberRepository memberRepository;
 
-
-    private static final int MAX_USER_GROUPS = 6; // 사용자가 참여할 수 있는 최대 그룹 수
+    private static final int MAX_USER_GROUPS = 5; // 사용자가 참여할 수 있는 최대 그룹 수
 
     @Transactional
-    public void createGroup(String name, int password, HttpSession session) throws IllegalArgumentException {
+    public Long createGroup(String name, int password, HttpSession session) throws IllegalArgumentException {
         if (!isValidName(name)) {
             throw new IllegalArgumentException("그룹명은 특수문자 미포함 최대 8자 입니다.");
         }
@@ -66,6 +65,37 @@ public class GroupsService {
                 .build();
 
         memberRepository.save(member);
+
+        return groupId;
+    }
+
+    @Transactional
+    public void joinGroup(String groupName, int groupPassword, HttpSession session) throws IllegalArgumentException {
+        // 세션에서 로그인한 사용자 정보 가져오기
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new RuntimeException("사용자가 로그인되어 있지 않습니다.");
+        }
+
+        // 그룹 정보 가져오기
+        Groups group = groupsRepository.findByGroupNameAndGroupPassword(groupName, groupPassword)
+                .orElseThrow(() -> new IllegalArgumentException("그룹 이름 또는 비밀번호가 잘못되었습니다."));
+
+        // 사용자가 속한 그룹 수 확인
+        long userGroupCount = memberRepository.countByUserID(user.getUserID());
+        if (userGroupCount >= MAX_USER_GROUPS) {
+            throw new RuntimeException("더이상 그룹에 가입할 수 없습니다.");
+        }
+
+        // Member 엔티티 생성 및 저장
+        Member member = Member.builder()
+                .groupId(group.getGroupId())
+                .userID(user.getUserID())
+                .group(group)
+                .user(user)
+                .build();
+
+        memberRepository.save(member);
     }
 
     private boolean isValidName(String name) {
@@ -95,12 +125,12 @@ public class GroupsService {
 
         // 필요한 정보만 DTO로 변환하여 반환
         return groupsList.stream()
-                .map(group -> new GroupsInfoDto(group.getGroupName(), group.getPlantType()))
+                .map(group -> new GroupsInfoDto(group.getGroupId(), group.getGroupName(), group.getGroupPassword()))
                 .collect(Collectors.toList());
     }
 
-    public List<SearchDto> searchGroups(String keyword) {
-        List<Groups> groups = groupsRepository.findByGroupNameContaining(keyword);
+    public List<SearchDto> searchGroups(SearchRequest searchRequest) {
+        List<Groups> groups = groupsRepository.findByGroupNameContaining(searchRequest.getGroupName());
         return groups.stream()
                 .map(group -> new SearchDto(
                         group.getGroupId(),
@@ -110,9 +140,18 @@ public class GroupsService {
                 .collect(Collectors.toList());
     }
 
-
     public GroupPageDto getGroupById(Long groupId) {
-        Groups group = groupsRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+        Groups group = groupsRepository.findById(groupId).orElseThrow(() -> new RuntimeException("그룹이 존재하지 않습니다."));
+        return GroupPageDto.builder()
+                .groupId(group.getGroupId())
+                .groupName(group.getGroupName())
+                .groupPassword(group.getGroupPassword())
+                .build();
+    }
+
+    public GroupPageDto getGroupInfo(Long groupId) {
+        Groups group = groupsRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("그룹이 존재하지 않습니다."));
         return GroupPageDto.builder()
                 .groupId(group.getGroupId())
                 .groupName(group.getGroupName())

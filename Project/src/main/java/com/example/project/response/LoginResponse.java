@@ -1,8 +1,7 @@
-package com.example.project.dto;
+package com.example.project.response;
 
 import com.example.project.domain.User;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class LoginResponse {

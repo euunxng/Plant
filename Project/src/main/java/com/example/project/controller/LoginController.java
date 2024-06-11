@@ -1,9 +1,9 @@
 package com.example.project.controller;
 
 import com.example.project.domain.User;
-import com.example.project.dto.EmailRequest;
-import com.example.project.dto.LoginRequest;
-import com.example.project.dto.LoginResponse;
+import com.example.project.request.EmailRequest;
+import com.example.project.request.LoginRequest;
+import com.example.project.response.LoginResponse;
 import com.example.project.service.EmailService;
 import com.example.project.service.LoginService;
 import jakarta.servlet.http.HttpSession;

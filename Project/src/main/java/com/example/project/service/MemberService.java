@@ -23,7 +23,7 @@ public class MemberService {
     private final GroupsRepository groupsRepository;
 
     private static final int MAX_GROUP_MEMBERS = 6; // 최대 그룹 인원
-    private static final int MAX_USER_GROUPS = 6; // 사용자가 참여할 수 있는 최대 그룹 수
+    private static final int MAX_USER_GROUPS = 5; // 사용자가 참여할 수 있는 최대 그룹 수
 
     @Transactional//하나의 트랜잭션에서 실행
     public void addMemberToGroup(Long groupId, HttpSession session) {

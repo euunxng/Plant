@@ -1,4 +1,4 @@
-package com.example.project.dto;
+package com.example.project.request;
 
 public class EmailRequest {
     private String recipientEmail; // 수신자 이메일 주소

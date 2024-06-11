@@ -1,15 +1,9 @@
-package com.example.project.dto;
+package com.example.project.request;
 
-public class GroupsInfoDto {
+public class SearchRequest {
     private Long groupId;
     private String groupName;
     private int groupPassword;
-
-    public GroupsInfoDto(Long groupId, String groupName, int groupPassword) {
-        this.groupId = groupId;
-        this.groupName = groupName;
-        this.groupPassword = groupPassword;
-    }
 
     // Getters and Setters
     public Long getGroupId() {
