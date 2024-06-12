@@ -36,7 +36,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/deleteMember")
-    public ResponseEntity<String> deleteMemberFromGroup(@RequestParam Long groupId, HttpSession session) {
+    public ResponseEntity<String> deleteMemberFromGroup(@RequestParam("groupId") Long groupId, HttpSession session) {
         try {
             memberService.deleteMemberFromGroup(groupId, session);
             return ResponseEntity.ok("그룹에서 성공적으로 탈퇴되었습니다.");

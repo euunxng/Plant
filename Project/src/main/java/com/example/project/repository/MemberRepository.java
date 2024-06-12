@@ -17,4 +17,5 @@ public interface MemberRepository extends JpaRepository<Member, MemberId> {
     List<Member> findByUser(User user);
     List<Member> findByGroupId(Long groupId);
     void deleteByGroupIdAndUserID(Long groupId, String userID);
+    boolean existsByGroupId(Long groupId);
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface GroupsRepository extends JpaRepository<Groups, Long> {
+    void deleteByGroupId(Long groupId);
     List<Groups> findByGroupNameContaining(String keyword);
-    boolean existsById(Long groupId);
     Optional<Groups> findByGroupNameAndGroupPassword(String groupName, int groupPassword);
 }

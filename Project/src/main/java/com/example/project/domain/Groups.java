@@ -35,4 +35,10 @@ public class Groups {
     @Column(name = "growStep", nullable = false)
     private int growStep = 0;
 
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Member> members;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Item> items;
+
 }

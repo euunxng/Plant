@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
+    void deleteByGroupId(Long groupId);
     Optional<Item> findByGroup_GroupId(Long groupId);
     List<Item> findByGroupId(Long groupId);
 }
