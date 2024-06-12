@@ -58,14 +58,24 @@ public class AuthController {
     public ResponseEntity<String> verifyUser(@RequestBody Map<String, String> request) {
         String userID = request.get("userID");
         String email = request.get("email");
+
+        // 로그 추가
+        System.out.println("Received request - userID: " + userID + ", email: " + email);
+
         User user = userService.findByUserIDAndEmail(userID, email);
+
         if (user == null) {
+            // 로그 추가
+            System.out.println("User not found for userID: " + userID + " and email: " + email);
             return ResponseEntity.badRequest().body("유저를 찾을 수 없습니다.");
         }
+
         String code = verificationService.generateVerificationCode(email);
         emailService.sendEmail(email, "[우정플랜트] 이메일 인증을 위한 인증번호입니다.", "인증번호 :  " + code);
+
         return ResponseEntity.ok("인증번호를 전송했습니다.");
     }
+
 
 
     @PostMapping("/resetPassword")

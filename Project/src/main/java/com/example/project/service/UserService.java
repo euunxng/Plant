@@ -119,7 +119,10 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
+
     public User findByUserIDAndEmail(String userID, String email) {
+        // 로그 추가
+        System.out.println("Searching for user with userID: " + userID + " and email: " + email);
         return userRepository.findByUserIDAndEmail(userID, email);
     }
 }
