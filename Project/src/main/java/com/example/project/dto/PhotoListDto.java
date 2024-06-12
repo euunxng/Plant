@@ -34,4 +34,8 @@ public class PhotoListDto {
 
     @JsonProperty("userName")
     private String userName;
+
+    @JsonProperty("profilePhotoPath")  // 프로필 사진 경로 추가
+    private String profilePhotoPath;
+
 }

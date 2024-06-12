@@ -20,6 +20,9 @@ public class PostViewDto {
     @JsonProperty("userName")  // 닉네임 필드 추가
     private String userName;
 
+    @JsonProperty("profilePhotoPath")
+    private String profilePhotoPath;
+
     @JsonProperty("photoPath")
     private String photoPath;
 

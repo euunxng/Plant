@@ -59,6 +59,7 @@ public class PostService {
         return PostViewDto.builder()
                 .userID(post.getUserID())
                 .userName(post.getUser().getUserName())  // 닉네임 추가
+                .profilePhotoPath(post.getUser().getProfilePhotoPath())
                 .ptext(post.getPtext())
                 .photoPath(post.getPhotoPath())
                 .pdate(post.getPdate())
@@ -75,6 +76,7 @@ public class PostService {
                         .groupId(post.getGroup().getGroupId()) // groupId 설정
                         .userName(post.getUser().getUserName()) // userName 설정
                         .ptext(post.getPtext()) // ptext 설정
+                        .profilePhotoPath(post.getUser().getProfilePhotoPath()) // profilePhotoPath 설정
                         .build())
                 .collect(Collectors.toList());
     }
