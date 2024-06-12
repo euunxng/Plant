@@ -9,8 +9,8 @@ import java.util.List; // List 클래스를 임포트
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT p FROM Post p JOIN FETCH p.user WHERE p.postID = :postID")
-    Optional<Post> findPostWithUserById(@Param("postID") Long postID);
+    @Query("SELECT p FROM Post p JOIN FETCH p.user WHERE p.postId = :postId")
+    Optional<Post> findPostWithUserById(@Param("postId") Long postId);
 
     List<Post> findByGroup_GroupId(Long groupId);
 }

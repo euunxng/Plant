@@ -1,7 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.domain.User;
-import com.example.project.dto.PhotoList;
+import com.example.project.dto.PhotoListDto;
 import com.example.project.dto.PostDto;
 import com.example.project.dto.PostViewDto;
 import com.example.project.service.PostService;
@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.example.project.service.UserService.logger;
-
 @RestController
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final ObjectMapper objectMapper;
+
     @Value("${file.upload.post}")
     private String uploadPostDir;
 
@@ -92,25 +92,25 @@ public class PostController {
     }
 
     @GetMapping("/View/{postId}")
-    public ResponseEntity<PostViewDto> getPostById(@PathVariable Long postID) {
-        PostViewDto postViewDto = postService.getPostById(postID);
+    public ResponseEntity<PostViewDto> getPostById(@PathVariable Long postId) {
+        PostViewDto postViewDto = postService.getPostById(postId);
         return ResponseEntity.ok(postViewDto);
     }
 
     @GetMapping("/List/{groupId}")
-    public ResponseEntity<List<PhotoList>> getPhotosByGroupId(@RequestParam("groupId") Long groupId) {
-        List<PhotoList> photos = postService.getPhotosByGroupId(groupId);
+    public ResponseEntity<List<PhotoListDto>> getPhotosByGroupId(@PathVariable("groupId") Long groupId) {
+        List<PhotoListDto> photos = postService.getPhotosByGroupId(groupId);
         return ResponseEntity.ok(photos);
     }
 
-    @DeleteMapping("/delete/{postID}")
-    public ResponseEntity<String> deletePost(HttpSession session, @PathVariable("postID") Long postID) {
+    @DeleteMapping("/delete/{postId}")
+    public ResponseEntity<String> deletePost(HttpSession session, @PathVariable("postId") Long postId) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return ResponseEntity.status(401).build();
         }
         try {
-            postService.deletePost(postID, user.getUserID());
+            postService.deletePost(postId, user.getUserID());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(403).body(e.getMessage());
         }

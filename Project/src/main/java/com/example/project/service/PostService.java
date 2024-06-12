@@ -2,7 +2,7 @@ package com.example.project.service;
 
 import com.example.project.domain.Groups;
 import com.example.project.domain.Post;
-import com.example.project.dto.PhotoList;
+import com.example.project.dto.PhotoListDto;
 import com.example.project.dto.PostDto;
 import com.example.project.dto.PostViewDto;
 import com.example.project.repository.GroupsRepository;
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -58,27 +57,28 @@ public class PostService {
                 .build();
     }
 
-    public List<PhotoList> getPhotosByGroupId(Long groupId) {
+    public List<PhotoListDto> getPhotosByGroupId(Long groupId) {
         List<Post> posts = postRepository.findByGroup_GroupId(groupId);
         return posts.stream()
-                .map(post -> PhotoList.builder()
-                        .postID(post.getPostID())
+                .map(post -> PhotoListDto.builder()
+                        .postId(post.getPostId())
+                        .pdate(post.getPdate())
                         .photoPath(post.getPhotoPath())
                         .build())
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void deletePost(Long postID, String userID) {
+    public void deletePost(Long postId, String userID) {
         // Post 엔티티를 조회하여 존재 여부 확인
-        Post post = postRepository.findById(postID)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + postID));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + postId));
 
         // 작성자인지 확인
         if (!post.getUserID().equals(userID)) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
 
-        postRepository.deleteById(postID);
+        postRepository.deleteById(postId);
     }
 }

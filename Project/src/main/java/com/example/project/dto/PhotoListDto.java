@@ -11,9 +11,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PhotoList {
+public class PhotoListDto {
 
-    private Long postID;
+    private long postId;
+    private LocalDate pdate;
     private String photoPath;
 
 }
