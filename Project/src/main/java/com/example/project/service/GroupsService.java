@@ -1,6 +1,7 @@
 package com.example.project.service;
 
 import com.example.project.domain.Groups;
+import com.example.project.domain.Item;
 import com.example.project.domain.Member;
 import com.example.project.domain.User;
 import com.example.project.dto.GroupPageDto;
@@ -8,6 +9,7 @@ import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.MemberDto;
 import com.example.project.dto.SearchDto;
 import com.example.project.repository.GroupsRepository;
+import com.example.project.repository.ItemRepository;
 import com.example.project.repository.MemberRepository;
 import com.example.project.request.SearchRequest;
 import jakarta.servlet.http.HttpSession;
@@ -24,6 +26,7 @@ public class GroupsService {
 
     private final GroupsRepository groupsRepository;
     private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
 
     private static final int MAX_USER_GROUPS = 5; // 사용자가 참여할 수 있는 최대 그룹 수
 
@@ -66,6 +69,14 @@ public class GroupsService {
                 .build();
 
         memberRepository.save(member);
+
+        // Item 엔티티 생성 및 저장
+        Item item = Item.builder()
+                .groupId(groupId)
+                .group(groups)
+                .build();
+
+        itemRepository.save(item);
 
         return groupId;
     }
