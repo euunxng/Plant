@@ -125,4 +125,8 @@ public class UserService {
         System.out.println("Searching for user with userID: " + userID + " and email: " + email);
         return userRepository.findByUserIDAndEmail(userID, email);
     }
+
+    public void deleteByUserID(String userID) {
+        userRepository.deleteByUserID(userID);
+    }
 }

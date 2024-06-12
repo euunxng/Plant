@@ -13,4 +13,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findPostWithUserById(@Param("postId") Long postId);
 
     List<Post> findByGroup_GroupId(Long groupId);
+    boolean existsByUserID(String userID);
 }

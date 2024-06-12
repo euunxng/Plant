@@ -1,5 +1,7 @@
 package com.example.project.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,8 +15,23 @@ import java.time.LocalDate;
 @Builder
 public class PhotoListDto {
 
+    @JsonProperty("postId")
     private long postId;
-    private LocalDate pdate;
+
+    @JsonProperty("groupId")
+    private long groupId;
+
+
+    @JsonProperty("photoPath")
     private String photoPath;
 
+    @JsonProperty("pdate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate pdate;
+
+    @JsonProperty("ptext")
+    private String ptext;
+
+    @JsonProperty("userName")
+    private String userName;
 }

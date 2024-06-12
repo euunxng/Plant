@@ -2,11 +2,13 @@ package com.example.project.service;
 
 import com.example.project.domain.Groups;
 import com.example.project.domain.Post;
+import com.example.project.domain.User;
 import com.example.project.dto.PhotoListDto;
 import com.example.project.dto.PostDto;
 import com.example.project.dto.PostViewDto;
 import com.example.project.repository.GroupsRepository;
 import com.example.project.repository.PostRepository;
+import com.example.project.repository.UserRepository; // UserRepository 추가
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,21 +16,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
     private final GroupsRepository groupsRepository;
+    private final UserRepository userRepository; // UserRepository 추가
 
     public PostDto createPost(PostDto postDto, String userID) {
-        Groups group = groupsRepository.findById(Long.parseLong(postDto.getGroupId()))
+        Groups group = groupsRepository.findById(postDto.getGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid groupId"));
+
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid userID"));
 
         Post post = Post.builder()
                 .group(group)
-                .groupId(Long.parseLong(postDto.getGroupId()))
+                .groupId(postDto.getGroupId())
                 .userID(userID)
+                .user(user) // 작성자의 UserName 설정
                 .ptext(postDto.getPtext())
                 .pdate(postDto.getPdate() != null ? postDto.getPdate() : LocalDate.now())
                 .photoPath(postDto.getPhotoPath())
@@ -64,6 +72,9 @@ public class PostService {
                         .postId(post.getPostId())
                         .pdate(post.getPdate())
                         .photoPath(post.getPhotoPath())
+                        .groupId(post.getGroup().getGroupId()) // groupId 설정
+                        .userName(post.getUser().getUserName()) // userName 설정
+                        .ptext(post.getPtext()) // ptext 설정
                         .build())
                 .collect(Collectors.toList());
     }
@@ -80,5 +91,10 @@ public class PostService {
         }
 
         postRepository.deleteById(postId);
+
+        boolean hasPosts = postRepository.existsByUserID(userID);
+        if (!hasPosts) {
+            userRepository.deleteByUserID(userID); // 수정된 메서드 호출
+        }
     }
 }

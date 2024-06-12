@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDto {
     @JsonProperty("groupId")
-    private String groupId;
+    private long groupId;
 
     @JsonProperty("photoPath")
     private String photoPath;

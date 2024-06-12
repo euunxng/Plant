@@ -41,4 +41,6 @@ public class Post {
 
     @Column(name="pdate", nullable = false)
     private LocalDate pdate;
+
+
 }
