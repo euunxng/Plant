@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface GroupsRepository extends JpaRepository<Groups, Long> {
     void deleteByGroupId(Long groupId);
     List<Groups> findByGroupNameContaining(String keyword);
-    Optional<Groups> findByGroupNameAndGroupPassword(String groupName, int groupPassword);
+    Optional<Groups> findByGroupIdAndGroupNameAndGroupPassword(Long groupId, String groupName, int groupPassword);
 }

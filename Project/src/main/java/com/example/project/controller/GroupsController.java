@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.dto.GroupPageDto;
 import com.example.project.dto.GroupsInfoDto;
+import com.example.project.dto.JoinView;
 import com.example.project.dto.SearchDto;
 import com.example.project.request.GroupRequest;
 import com.example.project.request.SearchRequest;
@@ -43,9 +44,9 @@ public class GroupsController {
     }
 
     @PostMapping("/api/group/join")
-    public ResponseEntity<String> joinGroup(@RequestBody GroupRequest groupRequest, HttpSession session) {
+    public ResponseEntity<String> joinGroup(@RequestBody JoinView joinView, HttpSession session) {
         try {
-            groupsService.joinGroup(groupRequest.getName(), groupRequest.getPassword(), session);
+            groupsService.joinGroup(joinView.getGroupId(), joinView.getName(), joinView.getPassword(), session);
             return ResponseEntity.ok("그룹에 성공적으로 가입되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

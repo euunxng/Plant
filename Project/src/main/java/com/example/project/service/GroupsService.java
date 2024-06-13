@@ -82,7 +82,7 @@ public class GroupsService {
     }
 
     @Transactional
-    public void joinGroup(String groupName, int groupPassword, HttpSession session) throws IllegalArgumentException {
+    public void joinGroup(Long groupId, String groupName, int groupPassword, HttpSession session) throws IllegalArgumentException {
         // 세션에서 로그인한 사용자 정보 가져오기
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -90,13 +90,13 @@ public class GroupsService {
         }
 
         // 그룹 정보 가져오기
-        Groups group = groupsRepository.findByGroupNameAndGroupPassword(groupName, groupPassword)
-                .orElseThrow(() -> new IllegalArgumentException("그룹 이름 또는 비밀번호가 잘못되었습니다."));
+        Groups group = groupsRepository.findByGroupIdAndGroupNameAndGroupPassword(groupId, groupName, groupPassword)
+                .orElseThrow(() -> new IllegalArgumentException("그룹 ID, 이름 또는 비밀번호가 잘못되었습니다."));
 
         // 사용자가 속한 그룹 수 확인
         long userGroupCount = memberRepository.countByUserID(user.getUserID());
         if (userGroupCount >= MAX_USER_GROUPS) {
-            throw new RuntimeException("더이상 그룹에 가입할 수 없습니다.");
+            throw new RuntimeException("더 이상 그룹에 가입할 수 없습니다.");
         }
 
         // Member 엔티티 생성 및 저장
