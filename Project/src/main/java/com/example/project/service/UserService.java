@@ -3,6 +3,7 @@ package com.example.project.service;
 import com.example.project.domain.User;
 import com.example.project.dto.UserDto;
 import com.example.project.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,7 +127,10 @@ public class UserService {
         return userRepository.findByUserIDAndEmail(userID, email);
     }
 
-    public void deleteByUserID(String userID) {
-        userRepository.deleteByUserID(userID);
+    @Transactional
+    public void deleteUser(String userID) {
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userID));
+        userRepository.delete(user);
     }
 }

@@ -2,12 +2,15 @@ package com.example.project.service;
 
 import com.example.project.domain.Groups;
 import com.example.project.domain.Member;
+import com.example.project.domain.Post;
 import com.example.project.domain.User;
 import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.MemberDto;
 import com.example.project.repository.GroupsRepository;
 import com.example.project.repository.ItemRepository;
 import com.example.project.repository.MemberRepository;
+import com.example.project.repository.PostRepository;
+import com.example.project.repository.CommentRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,42 +26,38 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final GroupsRepository groupsRepository;
     private final ItemRepository itemRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     private static final int MAX_GROUP_MEMBERS = 6; // 최대 그룹 인원
     private static final int MAX_USER_GROUPS = 5; // 사용자가 참여할 수 있는 최대 그룹 수
 
     @Transactional
     public void addMemberToGroup(Long groupId, HttpSession session) {
-
-        // 세션에서 로그인된 사용자 정보 가져오기
         User user = (User) session.getAttribute("user");
         if (user == null) {
             throw new RuntimeException("사용자가 로그인되어 있지 않습니다.");
         }
         String userId = user.getUserID();
 
-        // groupId를 사용하여 그룹 엔티티 가져오기
         Groups group = groupsRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("그룹을 찾을 수 없습니다."));
 
-        // 사용자가 이미 해당 그룹에 가입되어 있는지 확인
         boolean isMemberExist = memberRepository.existsByGroupIdAndUserID(groupId, userId);
         if (isMemberExist) {
             throw new RuntimeException("이미 가입된 그룹입니다.");
         }
-        // 그룹의 현재 멤버 수 확인
+
         long groupMemberCount = memberRepository.countByGroupId(groupId);
         if (groupMemberCount >= MAX_GROUP_MEMBERS) {
             throw new RuntimeException("최대 수용 인원을 초과했습니다.");
         }
 
-        // 사용자가 속한 그룹 수 확인
         long userGroupCount = memberRepository.countByUserID(userId);
         if (userGroupCount >= MAX_USER_GROUPS) {
             throw new RuntimeException("더이상 그룹을 생성할 수 없습니다.");
         }
 
-        // Member 엔티티 생성 및 저장
         Member member = Member.builder()
                 .groupId(groupId)
                 .userID(userId)
@@ -93,14 +92,30 @@ public class MemberService {
             throw new RuntimeException("사용자가 해당 그룹의 멤버가 아닙니다.");
         }
 
-        memberRepository.deleteByGroupIdAndUserID(groupId, userId);
+        try {
+            // 사용자가 탈퇴 시 해당 사용자의 게시물 및 댓글 삭제
+            List<Post> posts = postRepository.findByGroup_GroupIdAndUserID(groupId, userId);
+            for (Post post : posts) {
+                commentRepository.deleteByPost(post);
+                postRepository.delete(post);
+            }
 
-        // 그룹에 남은 멤버가 있는지 확인
-        boolean hasMembers = memberRepository.existsByGroupId(groupId);
-        if (!hasMembers) {
-            // 그룹에 더 이상 멤버가 없으면 그룹 삭제
-            itemRepository.deleteByGroupId(groupId);
-            groupsRepository.deleteByGroupId(groupId);
+            // 멤버 삭제
+            memberRepository.deleteByGroupIdAndUserID(groupId, userId);
+
+            // 그룹에 남은 멤버가 있는지 확인
+            boolean hasMembers = memberRepository.existsByGroupId(groupId);
+            if (!hasMembers) {
+                // 그룹에 더 이상 멤버가 없으면 그룹과 관련된 모든 엔티티 삭제
+                commentRepository.deleteByGroupId(groupId);
+                postRepository.deleteByGroupId(groupId);
+                itemRepository.deleteByGroupId(groupId);
+                groupsRepository.deleteById(groupId); // 그룹 ID로 삭제
+            }
+        } catch (Exception e) {
+            // 예외 발생 시 롤백하고 로그 출력
+            System.err.println("Error while deleting member from group: " + e.getMessage());
+            throw new RuntimeException("그룹 탈퇴 중 오류가 발생했습니다.");
         }
     }
 }
