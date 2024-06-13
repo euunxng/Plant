@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     List<Wishlist> findByGroupId(Long groupId);
+    void deleteByGroupId(Long groupId);
 }

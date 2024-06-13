@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface CalenderRepository extends JpaRepository<Calender, CalenderId> {
     List<Calender> findByGroupId(Long groupId);
+    void deleteByGroupId(Long groupId);
 
     @Query("SELECT COUNT(c) > 0 FROM Calender c WHERE c.groupId = :groupId")
     boolean existsByGroupId(@Param("groupId") Long groupId);

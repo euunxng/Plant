@@ -6,11 +6,7 @@ import com.example.project.domain.Post;
 import com.example.project.domain.User;
 import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.MemberDto;
-import com.example.project.repository.GroupsRepository;
-import com.example.project.repository.ItemRepository;
-import com.example.project.repository.MemberRepository;
-import com.example.project.repository.PostRepository;
-import com.example.project.repository.CommentRepository;
+import com.example.project.repository.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +24,8 @@ public class MemberService {
     private final ItemRepository itemRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final CalenderRepository calenderRepository;
+    private final WishlistRepository wishlistRepository;
 
     private static final int MAX_GROUP_MEMBERS = 6; // 최대 그룹 인원
     private static final int MAX_USER_GROUPS = 5; // 사용자가 참여할 수 있는 최대 그룹 수
@@ -106,11 +104,14 @@ public class MemberService {
             // 그룹에 남은 멤버가 있는지 확인
             boolean hasMembers = memberRepository.existsByGroupId(groupId);
             if (!hasMembers) {
+
                 // 그룹에 더 이상 멤버가 없으면 그룹과 관련된 모든 엔티티 삭제
+                wishlistRepository.deleteByGroupId(groupId);
+                calenderRepository.deleteByGroupId(groupId);
                 commentRepository.deleteByGroupId(groupId);
                 postRepository.deleteByGroupId(groupId);
                 itemRepository.deleteByGroupId(groupId);
-                groupsRepository.deleteById(groupId); // 그룹 ID로 삭제
+                groupsRepository.deleteById(groupId); 
             }
         } catch (Exception e) {
             // 예외 발생 시 롤백하고 로그 출력
