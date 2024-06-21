@@ -1,5 +1,6 @@
 package com.example.project.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID", referencedColumnName = "userID", insertable = false, updatable = false)
+    @JsonIgnore
     private User user;
 
     @Column(name = "postID", nullable = false)
@@ -31,6 +33,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postID", referencedColumnName = "postID", insertable = false, updatable = false)
+    @JsonIgnore
     private Post post;
 
     @Column(name="cmtText", length=60)
