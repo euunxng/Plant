@@ -1,11 +1,9 @@
 package com.example.project.controller;
 
 import com.example.project.domain.Calender;
-import com.example.project.dto.CalenderDto;
-import com.example.project.dto.cCompleteDto;
-import com.example.project.dto.cUpdateDto;
-import com.example.project.dto.cViewDto;
+import com.example.project.dto.*;
 import com.example.project.service.CalenderService;
+import com.example.project.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import java.time.format.DateTimeFormatter;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,7 @@ import java.util.List;
 public class CalenderController {
 
     private final CalenderService calenderService;
-
+    private final MemberService memberService;
 
     @PostMapping("/addSchedule")
     public Calender addCalenderEvent(@RequestParam("groupId") Long groupId,
@@ -66,4 +64,8 @@ public class CalenderController {
         return calenderService.updateCompleteByGroupIdAndDate(groupId, cDate);
     }
 
+    @GetMapping("/getUserFacePaths/{groupId}")
+    public List<UserDto> getUserFacePathsByGroupId(@PathVariable("groupId") Long groupId) {
+        return memberService.getUserFacePathsByGroupId(groupId);
+    }
 }

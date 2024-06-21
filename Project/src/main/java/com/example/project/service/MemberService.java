@@ -6,6 +6,7 @@ import com.example.project.domain.Post;
 import com.example.project.domain.User;
 import com.example.project.dto.GroupsInfoDto;
 import com.example.project.dto.MemberDto;
+import com.example.project.dto.UserDto;
 import com.example.project.repository.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -111,12 +112,28 @@ public class MemberService {
                 commentRepository.deleteByGroupId(groupId);
                 postRepository.deleteByGroupId(groupId);
                 itemRepository.deleteByGroupId(groupId);
-                groupsRepository.deleteById(groupId); 
+                groupsRepository.deleteById(groupId);
             }
         } catch (Exception e) {
             // 예외 발생 시 롤백하고 로그 출력
-            System.err.println("Error while deleting member from group: " + e.getMessage());
+            System.err.println("그룹에서 멤버를 삭제하는 중 오류 발생: " + e.getMessage());
             throw new RuntimeException("그룹 탈퇴 중 오류가 발생했습니다.");
         }
+    }
+
+    // 그룹에 속한 멤버들의 UserDto를 가져오는 메서드
+    public List<UserDto> getUserFacePathsByGroupId(Long groupId) {
+        List<Member> members = memberRepository.findByGroupId(groupId);
+        return members.stream()
+                .map(member -> UserDto.builder()
+                        .userID(member.getUser().getUserID())
+                        .userName(member.getUser().getUserName())
+                        .userPassword(member.getUser().getUserPassword())
+                        .email(member.getUser().getEmail())
+                        .profilePhotoUrl(member.getUser().getProfilePhotoPath())
+                        .userFaceUrl(member.getUserFacePath()) // Member 객체에서 userFacePath 값을 가져옴
+                        .login(member.getUser().isLogin())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
