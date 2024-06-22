@@ -1,12 +1,17 @@
 package com.example.project.controller;
 
 import com.example.project.domain.User;
+import com.example.project.request.EmailRequest;
 import com.example.project.request.LoginRequest;
+import com.example.project.request.VerifyRequest;
 import com.example.project.dto.UserDto;
+import com.example.project.service.EmailService;
 import com.example.project.service.UserService;
+import com.example.project.service.VerificationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +32,8 @@ import static com.example.project.service.UserService.logger;
 public class UserController {
 
     private final UserService userService;
+    private final EmailService emailService;
+    private final VerificationService verificationService;
 
     @Value("${file.upload.profile}")
     private String uploadProfileDir;
@@ -145,6 +152,27 @@ public class UserController {
         } catch (IOException e) {
             logger.error("Could not upload the file: ", e);
             return ResponseEntity.status(500).body("Could not upload the file: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/sendSignupCode")
+    public ResponseEntity<String> sendSignupCode(@RequestBody EmailRequest emailRequest) {
+        String email = emailRequest.getEmail();
+        if (userService.checkEmail(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 이메일입니다.");
+        }
+        String code = verificationService.generateVerificationCode(email);
+        emailService.sendEmail(email, "[우정플랜트] 회원가입 이메일 인증 코드", "인증코드는 " + code);
+        return ResponseEntity.ok("Verification code sent.");
+    }
+
+    @PostMapping("/verifySignupCode")
+    public ResponseEntity<String> verifySignupCode(@RequestBody VerifyRequest verifyRequest) {
+        boolean isVerified = verificationService.verifyCode(verifyRequest.getEmail(), verifyRequest.getCode());
+        if (isVerified) {
+            return ResponseEntity.ok("Verification successful.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed.");
         }
     }
 }

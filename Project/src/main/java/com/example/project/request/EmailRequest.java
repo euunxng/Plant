@@ -39,5 +39,13 @@ public class EmailRequest {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getEmail() {
+        return recipientEmail;
+    }
+
+    public void setEmail(String email) {
+        this.recipientEmail = email;
+    }
 }
 
