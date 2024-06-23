@@ -3,6 +3,7 @@ package com.example.project.controller;
 import com.example.project.domain.Item;
 import com.example.project.dto.ItemDto;
 import com.example.project.dto.coinDto;
+import com.example.project.dto.SeedDto;
 import com.example.project.dto.waterDto;
 import com.example.project.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,18 @@ public class ItemController {
     public ResponseEntity<Item> createItem(@RequestParam("groupId") Long groupId) {
         Item newItem = itemService.createItem(groupId);
         return ResponseEntity.ok(newItem);
+    }
+
+    @PutMapping("/resetSeed")
+    public ResponseEntity<Void> resetSeed(@RequestParam("groupId") Long groupId) {
+        itemService.resetSeedByGroupId(groupId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getSeed/{groupId}")
+    public ResponseEntity<SeedDto> getSeedByGroupId(@PathVariable("groupId") Long groupId) {
+        SeedDto seedDto = itemService.getSeedByGroupId(groupId);
+        return new ResponseEntity<>(seedDto, HttpStatus.OK);
     }
 
 }

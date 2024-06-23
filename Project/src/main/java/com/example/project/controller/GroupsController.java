@@ -71,4 +71,10 @@ public class GroupsController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    @PutMapping("/{groupId}/reset")
+    public ResponseEntity<Void> resetGroupFields(@PathVariable("groupId") Long groupId) {
+        groupsService.resetGroupFields(groupId);
+        return ResponseEntity.ok().build();
+    }
 }

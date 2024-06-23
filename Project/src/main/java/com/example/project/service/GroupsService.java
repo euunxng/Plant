@@ -178,4 +178,12 @@ public class GroupsService {
 
         return new GroupsInfoDto(group.getGroupId(), group.getGroupName(), group.getGroupPassword(), memberDtos);
     }
+
+    public void resetGroupFields(Long groupId) {
+        Groups group = groupsRepository.findById(groupId).orElseThrow(() -> new RuntimeException("그룹을 찾을 수 없습니다."));
+        group.setPlantGauge(0);
+        group.setPlantType(0);
+        group.setGrowStep(0);
+        groupsRepository.save(group);
+    }
 }

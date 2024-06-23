@@ -2,6 +2,7 @@ package com.example.project.service;
 
 import com.example.project.domain.Item;
 import com.example.project.dto.ItemDto;
+import com.example.project.dto.SeedDto;
 import com.example.project.dto.coinDto;
 import com.example.project.dto.waterDto;
 import com.example.project.repository.ItemRepository;
@@ -131,5 +132,29 @@ public class ItemService {
     public Item createItem(Long groupId) {
         Item item = Item.builder().groupId(groupId).build();
         return itemRepository.save(item);
+    }
+
+    @Transactional
+    public void resetSeedByGroupId(Long groupId) {
+        List<Item> items = itemRepository.findByGroupId(groupId);
+        if (items == null || items.isEmpty()) {
+            System.out.println("No items found for groupId: " + groupId);
+            return;
+        }
+
+        System.out.println("Found items: " + items.size());
+        for (Item item : items) {
+            System.out.println("Item before reset: " + item);
+            item.setSeed(0);
+            System.out.println("Item after reset: " + item);
+        }
+
+        List<Item> savedItems = itemRepository.saveAll(items);
+        System.out.println("Items saved: " + savedItems);
+    }
+
+    public SeedDto getSeedByGroupId(Long groupId) {
+        int seedCount = itemRepository.findSeedCountByGroupId(groupId);
+        return new SeedDto(seedCount);
     }
 }
