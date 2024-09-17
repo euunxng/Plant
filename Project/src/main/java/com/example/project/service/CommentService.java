@@ -31,11 +31,12 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long cmtID, String userID) {
-        Optional<Comment> comment = commentRepository.findByCmtID(cmtID);
-        if (comment.isPresent() && !comment.get().getUserID().equals(userID)) {
+        Optional<Comment> comment = commentRepository.findById(cmtID);
+        if (comment.isPresent() && comment.get().getUserID().equals(userID)) {
+            commentRepository.deleteByCmtIDAndUserID(cmtID, userID);
+        } else {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
-        commentRepository.deleteByCmtIDAndUserID(cmtID, userID);
     }
 
     public List<cmtViewDto> getCommentsByPostID(Long postID) {
@@ -50,5 +51,4 @@ public class CommentService {
                     .build();
         }).collect(Collectors.toList());
     }
-
 }

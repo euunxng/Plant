@@ -7,6 +7,8 @@ import com.example.project.repository.CommentRepository;
 import com.example.project.service.CommentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,24 +21,29 @@ public class CommentController {
 
     private final CommentService commentService;
     private final CommentRepository commentRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     @PostMapping("/api/postComments")
-    public ResponseEntity<Comment> addComment(HttpSession session, @RequestParam Long postID, @RequestParam String cmtText) {
+    public ResponseEntity<Comment> addComment(HttpSession session, @RequestParam("postID") Long postID, @RequestParam("cmtText") String cmtText) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return ResponseEntity.status(401).build();
+            logger.error("User is not logged in.");
+            return ResponseEntity.status(401).body(null);
         }
+        logger.info("User {} is adding a comment.", user.getUserID());
         String userID = user.getUserID();
         Comment savedComment = commentService.saveComment(userID, postID, cmtText);
         return ResponseEntity.ok(savedComment);
     }
 
     @DeleteMapping("/api/deleteComments")
-    public ResponseEntity<String> deleteComment(HttpSession session, @RequestParam Long cmtID) {
+    public ResponseEntity<String> deleteComment(HttpSession session, @RequestParam("cmtID") Long cmtID) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
+            logger.error("User is not logged in.");
             return ResponseEntity.status(401).body("로그인이 필요합니다.");
         }
+        logger.info("User {} is deleting a comment with ID {}", user.getUserID(), cmtID);
         try {
             commentService.deleteComment(cmtID, user.getUserID());
         } catch (IllegalArgumentException e) {
@@ -50,9 +57,8 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
-
     @GetMapping("/api/getComments")
-    public ResponseEntity<List<cmtViewDto>> getCommentsByPostID(@RequestParam Long postID) {
+    public ResponseEntity<List<cmtViewDto>> getCommentsByPostID(@RequestParam("postID") Long postID) {
         List<cmtViewDto> comments = commentService.getCommentsByPostID(postID);
         return ResponseEntity.ok(comments);
     }
