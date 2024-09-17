@@ -91,7 +91,7 @@ public class GroupsService {
 
         // 그룹 정보 가져오기
         Groups group = groupsRepository.findByGroupIdAndGroupNameAndGroupPassword(groupId, groupName, groupPassword)
-                .orElseThrow(() -> new IllegalArgumentException("그룹 ID, 이름 또는 비밀번호가 잘못되었습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("비밀번호를 확인해주세요."));
 
         // 사용자가 속한 그룹 수 확인
         long userGroupCount = memberRepository.countByUserID(user.getUserID());
