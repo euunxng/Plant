@@ -15,7 +15,10 @@ import lombok.NoArgsConstructor;
 public class Item {
 
     @Id
-    @Column(name = "groupId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long itemId;
+
+    @Column(name = "groupId", nullable = false)
     private Long groupId;
 
     @ManyToOne(fetch = FetchType.LAZY)
