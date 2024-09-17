@@ -1,10 +1,7 @@
 package com.example.project.service;
 
 import com.example.project.domain.Item;
-import com.example.project.dto.ItemDto;
-import com.example.project.dto.SeedDto;
-import com.example.project.dto.coinDto;
-import com.example.project.dto.waterDto;
+import com.example.project.dto.*;
 import com.example.project.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -98,6 +95,37 @@ public class ItemService {
                 .ladybug(updatedItem.isLadybug())
                 .title(updatedItem.isTitle())
                 .bfly(updatedItem.isBfly())
+                .build();
+    }
+
+    public IconlistDto updateIconlist(Long groupId, IconlistDto iconlistDto) {
+        Item item = itemRepository.findByGroup_GroupId(groupId)
+                .orElseThrow(() -> new RuntimeException("그룹이 존재하지 않습니다."));
+
+        item.setRabbit(iconlistDto.isRabbit());
+        item.setSeed(iconlistDto.getSeed());
+        item.setStone(iconlistDto.isStone());
+        item.setEnergy1(iconlistDto.getEnergy1());
+        item.setEnergy2(iconlistDto.getEnergy2());
+        item.setEnergy3(iconlistDto.getEnergy3());
+        item.setCuteStone(iconlistDto.isCuteStone());
+        item.setLadybug(iconlistDto.isLadybug());
+        item.setTitle(iconlistDto.isTitle());
+        item.setBfly(iconlistDto.isBfly());
+
+        Item updateIconlist = itemRepository.save(item);
+
+        return IconlistDto.builder()
+                .rabbit(updateIconlist.isRabbit())
+                .seed(updateIconlist.getSeed())
+                .stone(updateIconlist.isStone())
+                .energy1(updateIconlist.getEnergy1())
+                .energy2(updateIconlist.getEnergy2())
+                .energy3(updateIconlist.getEnergy3())
+                .cuteStone(updateIconlist.isCuteStone())
+                .ladybug(updateIconlist.isLadybug())
+                .title(updateIconlist.isTitle())
+                .bfly(updateIconlist.isBfly())
                 .build();
     }
 

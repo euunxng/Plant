@@ -1,10 +1,7 @@
 package com.example.project.controller;
 
 import com.example.project.domain.Item;
-import com.example.project.dto.ItemDto;
-import com.example.project.dto.coinDto;
-import com.example.project.dto.SeedDto;
-import com.example.project.dto.waterDto;
+import com.example.project.dto.*;
 import com.example.project.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,6 +41,16 @@ public class ItemController {
         try {
             ItemDto updatedItem = itemService.updateItem(groupId, itemDto);
             return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/{groupId}/putIconlist")
+    public ResponseEntity<IconlistDto> updateIconlist(@PathVariable("groupId") Long groupId, @RequestBody IconlistDto iconlistDto) {
+        try {
+            IconlistDto updateIconlist = itemService.updateIconlist(groupId, iconlistDto);
+            return new ResponseEntity<>(updateIconlist, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
