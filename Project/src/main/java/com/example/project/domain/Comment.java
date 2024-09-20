@@ -28,11 +28,11 @@ public class Comment {
     @JsonIgnore
     private User user;
 
-    @Column(name = "postID", nullable = false)
-    private Long postID;
+    @Column(name = "postId", nullable = false)  // 수정됨
+    private Long postId;  // 수정됨
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postID", referencedColumnName = "postID", insertable = false, updatable = false)
+    @JoinColumn(name = "postId", referencedColumnName = "postId", insertable = false, updatable = false)  // 수정됨
     @JsonIgnore
     private Post post;
 

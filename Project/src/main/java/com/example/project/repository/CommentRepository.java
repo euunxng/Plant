@@ -14,15 +14,16 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByPostID(Long postID);
-    Optional<Comment> findById(Long cmtID); // findByCmtID를 findById로 변경
+    List<Comment> findByPostId(Long postId); // 수정된 메서드 이름
+
+    Optional<Comment> findById(Long cmtID);
 
     @Modifying
     @Transactional
     @Query("DELETE FROM Comment c WHERE c.cmtID = :cmtID AND c.userID = :userID")
     void deleteByCmtIDAndUserID(@Param("cmtID") Long cmtID, @Param("userID") String userID);
 
-    void deleteByPost(Post posts);
+    void deleteByPost(Post post);
 
     @Modifying
     @Transactional

@@ -19,10 +19,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public Comment saveComment(String userID, Long postID, String cmtText) {
+    public Comment saveComment(String userID, Long postId, String cmtText) { // postID -> postId
         Comment comment = Comment.builder()
                 .userID(userID)
-                .postID(postID)
+                .postId(postId) // postID -> postId
                 .cmtText(cmtText)
                 .cmtDate(LocalDateTime.now())
                 .build();
@@ -39,8 +39,8 @@ public class CommentService {
         }
     }
 
-    public List<cmtViewDto> getCommentsByPostID(Long postID) {
-        List<Comment> comments = commentRepository.findByPostID(postID);
+    public List<cmtViewDto> getCommentsByPostId(Long postId) { // 수정
+        List<Comment> comments = commentRepository.findByPostId(postId); // 수정
         return comments.stream().map(comment -> {
             LocalDateTime cmtDate = comment.getCmtDate().withNano(0);
             return cmtViewDto.builder()

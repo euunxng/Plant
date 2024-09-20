@@ -58,8 +58,9 @@ public class CommentController {
     }
 
     @GetMapping("/api/getComments")
-    public ResponseEntity<List<cmtViewDto>> getCommentsByPostID(@RequestParam("postID") Long postID) {
-        List<cmtViewDto> comments = commentService.getCommentsByPostID(postID);
+    public ResponseEntity<List<cmtViewDto>> getCommentsByPostId(@RequestParam("postId") Long postId) {  // 여기서 postId로 통일
+        List<cmtViewDto> comments = commentService.getCommentsByPostId(postId);  // postId로 통일
         return ResponseEntity.ok(comments);
     }
+
 }
