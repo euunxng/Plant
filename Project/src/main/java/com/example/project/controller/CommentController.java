@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
@@ -24,7 +23,7 @@ public class CommentController {
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     @PostMapping("/api/postComments")
-    public ResponseEntity<Comment> addComment(HttpSession session, @RequestParam("postID") Long postID, @RequestParam("cmtText") String cmtText) {
+    public ResponseEntity<Comment> addComment(HttpSession session, @RequestParam("postId") Long postId, @RequestParam("cmtText") String cmtText) { // 여기서 postId로 통일
         User user = (User) session.getAttribute("user");
         if (user == null) {
             logger.error("User is not logged in.");
@@ -32,7 +31,7 @@ public class CommentController {
         }
         logger.info("User {} is adding a comment.", user.getUserID());
         String userID = user.getUserID();
-        Comment savedComment = commentService.saveComment(userID, postID, cmtText);
+        Comment savedComment = commentService.saveComment(userID, postId, cmtText); // postId로 통일
         return ResponseEntity.ok(savedComment);
     }
 
@@ -58,8 +57,8 @@ public class CommentController {
     }
 
     @GetMapping("/api/getComments")
-    public ResponseEntity<List<cmtViewDto>> getCommentsByPostId(@RequestParam("postId") Long postId) {  // 여기서 postId로 통일
-        List<cmtViewDto> comments = commentService.getCommentsByPostId(postId);  // postId로 통일
+    public ResponseEntity<List<cmtViewDto>> getCommentsByPostId(@RequestParam("postId") Long postId) { // 여기서 postId로 통일
+        List<cmtViewDto> comments = commentService.getCommentsByPostId(postId); // postId로 통일
         return ResponseEntity.ok(comments);
     }
 
