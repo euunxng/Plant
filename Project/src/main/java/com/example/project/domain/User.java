@@ -60,6 +60,10 @@ public class User {
     @Column(name = "login", columnDefinition = "TINYINT(1) default 0")
     private boolean login = false;
 
+    @Builder.Default
+    @Column(name = "kakao", columnDefinition = "TINYINT(1) default 0")
+    private boolean kakao = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Member> members;
 
