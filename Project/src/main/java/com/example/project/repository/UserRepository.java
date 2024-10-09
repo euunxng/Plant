@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User,String> {
     User findByUserIDAndEmail(String userID, String email);
 
     void deleteByUserID(String userID); // 사용자 ID로 사용자 삭제
+
+    User findByToken(String token);
 }

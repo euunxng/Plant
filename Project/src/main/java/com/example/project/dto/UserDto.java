@@ -17,5 +17,5 @@ public class UserDto {
     private String profilePhotoUrl; // 프로필 사진 URL
     private String userFaceUrl; // 얼굴 사진 URL
     private boolean login; // 로그인 여부
-    private boolean kakao; // 로그인 여부
+    private boolean kakao; // 카카오 로그인 여부
 }

@@ -48,7 +48,18 @@ public class UserController {
             @RequestParam("userPassword") String userPassword,
             @RequestParam("email") String email,
             @RequestParam("profilePhotoUrl") String profilePhotoUrl,
-            @RequestParam("userFaceUrl") String userFaceUrl) {
+            @RequestParam("userFaceUrl") String userFaceUrl,
+            @RequestParam(value = "kakao", required = false) Boolean kakao
+    ) {
+        // kakao가 null일 경우 false로 설정
+        if (kakao == null) {
+            kakao = false;
+        }
+        logger.info("userID: {}", userID != null ? userID : "null");
+        logger.info("userName: {}", userName != null ? userName : "null");
+        logger.info("email: {}", email != null ? email : "null");
+        logger.info("userPassword: {}", userPassword != null ? userPassword : "null");
+
         UserDto userRequest = UserDto.builder()
                 .userID(userID)
                 .userName(userName)
@@ -57,14 +68,13 @@ public class UserController {
                 .profilePhotoUrl(profilePhotoUrl)
                 .userFaceUrl(userFaceUrl)
                 .login(true)
+                .kakao(kakao)  // 명시된 kakao 값 사용
                 .build();
+
+        logger.info("Received data - userID: {}, userName: {}, email: {}, userPassword: {}, kakao: {}", userID, userName, email, userPassword, kakao);
         return userService.save(userRequest);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequestDto) {
-        return userService.login(loginRequestDto);
-    }
 
     @GetMapping("/userID/{userID}")
     public ResponseEntity<?> checkUserID(@PathVariable("userID") String userID) {
@@ -98,6 +108,16 @@ public class UserController {
             throw new RuntimeException("사용자가 로그인되어 있지 않습니다.");
         }
         return userService.getUserInfo(user);
+    }
+
+    @GetMapping("/userinfo")
+    public ResponseEntity<UserDto> getUserInfoByToken(@RequestParam("token") String token) {
+        UserDto user = userService.getUserByToken(token); // 서비스에서 토큰을 통해 사용자 조회
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PostMapping(value = "/uploadProfileImage", consumes = "multipart/form-data")
@@ -175,4 +195,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed.");
         }
     }
+
+
 }

@@ -17,6 +17,8 @@ import com.example.project.request.LoginRequest;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final OAuthService oAuthService;
+
     public static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public ResponseEntity<?> save(UserDto userRequest) {
@@ -29,14 +31,22 @@ public class UserService {
             if (userRepository.existsByEmail(userRequest.getEmail())) {
                 throw new IllegalArgumentException("email " + userRequest.getEmail() + " 가 이미 있습니다.");
             }
-            String password = userRequest.getUserPassword();
-            if (!isValidPassword(password)) {
-                throw new IllegalArgumentException("비밀번호는 숫자와 영어를 모두 포함하고, 5-10자여야합니다.");
+            // 카카오 로그인인 경우, userPassword를 userID와 동일하게 설정
+            if (userRequest.isKakao()) {
+                userRequest.setUserPassword(userRequest.getUserID()); // userID와 userPassword 동일하게 설정
+            } else {
+                // 일반 회원가입인 경우 비밀번호 유효성 검사
+                String password = userRequest.getUserPassword();
+                if (!isValidPassword(password)) {
+                    throw new IllegalArgumentException("비밀번호는 숫자와 영어를 모두 포함하고, 5-10자여야합니다.");
+                }
             }
             String email = userRequest.getEmail();
             if (!isValidEmail(email)) {
                 throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
             }
+
+
 
             User newUser = User.builder()
                     .userID(userRequest.getUserID())
@@ -46,6 +56,7 @@ public class UserService {
                     .profilePhotoPath(userRequest.getProfilePhotoUrl())
                     .userFacePath(userRequest.getUserFaceUrl())
                     .login(userRequest.isLogin())
+                    .kakao(userRequest.isKakao())
                     .build();
 
             logger.info("Saving user to database: {}", newUser);
@@ -133,4 +144,23 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userID));
         userRepository.delete(user);
     }
+
+    public UserDto getUserByToken(String token) {
+// 토큰으로 사용자 찾기 로직 추가
+        User user = userRepository.findByToken(token); // findByToken 메서드를 UserRepository에 추가해야 합니다.
+        if (user != null) {
+            return UserDto.builder()
+                    .userID(user.getUserID())
+                    .userName(user.getUserName())
+                    .email(user.getEmail())
+                    .profilePhotoUrl(user.getProfilePhotoPath())
+                    .userFaceUrl(user.getUserFacePath())
+                    .login(user.isLogin())
+                    .kakao(user.isKakao())
+                    .build();
+        }
+        return null;
+    }
+
+
 }
